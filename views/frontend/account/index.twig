@@ -1,0 +1,71 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Account
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container">
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ data.firstname}} {{ data.middlename }} {{ data.lastname }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class=" col-md-9 col-lg-9 ">
+                                <table class="table table-user-information">
+                                    <tbody>
+                                    <tr>
+                                        <td>Straatnaam:</td>
+                                        <td>{{ data.streetname }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Huisnummer:</td>
+                                        <td>{{ data.housenumber }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Postcode</td>
+                                        <td>{{ data.zipcode }}</td>
+                                    </tr>
+
+                                    <tr>
+                                    <tr>
+                                        <td>Stad</td>
+                                        <td>{{ data.placeofresidence }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobiel</td>
+                                        <td>{{ data.mobile }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email</td>
+                                        <td>{{ data.email }}</td>
+                                    </tr>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+
+                        <a href="/account/password" type="button" class="btn btn-sm btn-primary">Verander Wachtwoord</a>
+                        <span class="pull-right">
+                            <a href="/account/change" type="button" class="btn btn-sm btn-primary">Verander Gegevens</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+{% endblock %}

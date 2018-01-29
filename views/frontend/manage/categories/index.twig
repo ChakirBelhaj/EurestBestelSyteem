@@ -1,0 +1,36 @@
+{% extends 'frontend/manage/manage_base.twig' %}
+
+{% block title %}
+	Categorieën
+{% endblock %}
+
+{% block manage_content %}
+	<h3>Catagorieën</h3>
+	<form method="post">
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<tr>
+					<th>ID</th>
+					<th>Naam</th>
+					<th>Gemaakt op</th>
+					<th>Laatst bijgewerkt</th>
+					<th></th>
+					<th></th>
+				</tr>
+				{% for category in categories %}
+					<tr>
+						<th>{{ category.id }}</th>
+						<th>{{ category.name }}{% if category.is_sale %}<span style="margin-left: 10px;" class="label label-success">Sale categorie</span>{% elseif category.is_event %}<span style="margin-left: 10px;" class="label label-warning">Evenementen</span>{% endif %}</th>
+						<th>{{ category.created_at|date('d-m-Y H:i') }}</th>
+						<th>{{ category.updated_at|date('d-m-Y H:i') }}</th>
+						<th>
+							<a href="/manage/categories/category/{{category.id}}"><button class="btn btn-sm btn-primary" type="button">Bewerk</button></a>
+							<button type="submit" name="delete" value="{{ category.id }}" class="btn btn-sm btn-danger">Verwijder</button>
+						</th>
+						<th></th>
+					</tr>
+				{% endfor %}	
+			</table>
+		</div>
+	</form>
+{% endblock %}

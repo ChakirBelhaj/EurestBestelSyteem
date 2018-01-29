@@ -1,0 +1,35 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block css %}
+	@media screen and (min-width: 1900px) {
+		.broken {
+			-ms-transform: rotate(20deg) translate(266px, 176px);
+			-webkit-transform: rotate(20deg) translate(266px, 176px);
+			transform: rotate(20deg) translate(266px, 176px);
+		}
+	}
+{% endblock %}
+
+{% block outside %}
+
+	<div class="container">
+		<h1>500</h1>
+		<p>Internal server error</p>
+		<p><small>The server is experiencing an internal server problem.</small></p>
+		<p><a href="/"><button class="btn btn-sm btn-primary" type="button">Home</button></a> &nbsp; <a onclick="back()"><button class="btn btn-sm btn-primary" type="button">Back to previous page</button></a></p>
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+		function back() {
+		    window.history.back();
+		}
+		$('#navbar').addClass('broken');
+	</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'frontend/manage/manage_base.twig' %}
+
+{% block title %}
+	Producten
+{% endblock %}
+
+{% block manage_content %}
+	<h3>Producten</h3>
+	<form method="post">
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<tr>
+					<th>ID</th>
+					<th>Naam</th>
+					<th>Prijs</th>
+					<th>Gemaakt op</th>
+					<th>Laatst bijgewerkt</th>
+					<th></th>
+					<th></th>
+				</tr>
+				{% for product in products %}
+					<tr>
+						<th>{{ product.id }}</th>
+						<th>{{ product.name }}</th>
+						<th>{% if product.sale_price %}<strike>&euro;  {{product.price|money}}</strike> &euro;  {{ product.sale_price|money }}{% else %}&euro; {{ product.price|money }}{% endif %}</th>
+						<th>{{ product.created_at|date('d-m-Y H:i') }}</th>
+						<th>{{ product.updated_at|date('d-m-Y H:i') }}</th>
+						<th>
+							<a href="/manage/products/product/{{product.id}}"><button class="btn btn-sm btn-primary" type="button">Bewerk</button></a>
+							<button type="submit" name="delete" value="{{ product.id }}" class="btn btn-sm btn-danger">Verwijder</button>
+						</th>
+						<th></th>
+					</tr>
+				{% endfor %}	
+			</table>
+		</div>
+	</form>
+{% endblock %}

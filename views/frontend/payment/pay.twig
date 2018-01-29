@@ -1,0 +1,43 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Betaal uw bestelling
+{% endblock %}
+
+{% block body %}
+	<br><br>
+	{% if errors %}
+		{% for error in errors %}
+			<p>{{ error }}</p>
+		{% endfor %}
+	{% else %}
+		<h2>Betaal je bestelling</h2>
+		<h4>Het totaalbedrag is: &euro; {{ totalprice|money }}</h4>
+		<br>
+		<form method="post">
+			<div class="row">
+				<div class="col-md-6">
+					<h3>Betaal online</h3>
+						<select name="payment_method">
+							{% for paymentMethod in payment_methods.methods %}
+								{% if paymentMethod.id == "ideal" %}
+									<optgroup label="iDeal">
+										{% for idealIssuer in payment_methods.ideal_issuers %}
+											<option value="{{ idealIssuer.id }}">{{ idealIssuer.name }}</option> 
+										{% endfor %}
+									</optgroup>
+								{% else %}
+									<option value="{{ paymentMethod.id }}">{{ paymentMethod.description }}</option> 
+								{% endif %}
+							{% endfor %}
+						</select>
+					<input class="btn btn-default" type="submit" name="online" value="Betaal">
+				</div>
+				<div class="col-md-6">
+					<h3>Betaal bij afhalen</h3>
+					<input class="btn btn-default" type="submit" name="in_store" value="Betaal bij afhalen">
+				</div>
+			</div>
+		</form>
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,7 @@
+.DS_Store
+/node_modules
+/vendor
+/.idea
+.env
+/php_errors.log
+/.vagrant

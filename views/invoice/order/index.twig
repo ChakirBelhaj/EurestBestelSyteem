@@ -1,0 +1,83 @@
+<br><br>
+<div class="invoice">
+	<table>
+	<tr>
+		<td>
+			<img width="75" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Eurest_Logo.svg/1200px-Eurest_Logo.svg.png">
+		</td>
+		<td></td>
+		<td></td>
+	</tr>
+	<br>
+	<tr>
+		<td>
+			<div class="company-info">
+				Eurest<br>
+				Laarderhoogteweg 11<br>
+				Postbus 22875<br>
+				1100 DJ Amsterdam<br>
+				<br>
+				T: +31 (0)20 5643 700<br>
+				E: info@eurest.nl<br>
+				W: www.eurestfood.nl<br>
+			</div>
+		</td>
+		<td></td>
+		<td>
+			<div class="invoice-info">
+				<b>Factuur</b><br>
+				<br>
+				Order nummer: <b># {{ order.id }}</b><br>
+				Datum: {{ order.created_at|date('d-m-Y H:i') }}
+			</div>
+			<div class="client-info">
+				{{ user.fullname }}<br>
+				{{ user.streetname }} {{ user.housenumber }}<br>
+				{{ user.zipcode }} {{ user.placeofresidence }}
+			</div>
+		</td>
+	</tr>
+	</table>
+	<br>
+	<h3>Overzicht bestelling</h3>
+	<br>
+	<table>
+		<tr>
+			<th><b>Product nr.</b></th>
+			<th><b>Product</b></th>
+			<th><b>Aantal</b></th>
+			<th><b>Prijs per stuk</b></th>
+			<th><b>Waarvan BTW</b></th>
+			<th><b>Subtotaal</b></th>
+		</tr>
+		<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+		{% for item in order.items %}
+			<tr>
+				<td>{{ item.id }}</td>
+				<td>{{ item.name }}{% if item.remarks %}<br>Opmerking: {{item.remarks}}{% endif %}</td>
+				<td>{{ item.amount }}x</td>
+				<td>{% if item.isSale %}<strike>&euro;  {{item.price|money}}</strike> &euro;  {{  item.sale_price|money }}{% else %}&euro; {{ item.price|money }}{% endif %}</td>
+				<td>6% à &euro; {{ item.effectiveVat|money }}</td>
+				<td>&euro; {{ item.effectiveTotalPrice|money }}</td>
+			</tr>
+		{% endfor %}
+		<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+		<tr><td></td><td></td><td></td><td></td><td><b>Subtotaal: </b></td><td>&euro; {{ order.effectiveSubtotalPrice|money }}</td></tr>
+		<tr><td></td><td></td><td></td><td></td><td><b>BTW: </b></td><td>&euro; {{order.effectiveTotalVat|money}}</td></tr>
+		<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+		<tr><td></td><td></td><td></td><td></td><td><b>Totaal: </b></td><td>&euro; {{order.effectiveTotalPrice|money}}</td></tr>
+	</table>
+	<br><br>
+	{% if order.remarks %}
+		<p>Opmerkingen:</p>
+		{{ order.remarks }}
+		<br><br>
+	{% endif %}
+	{% if order.payment.status == 'paid' %}
+		<i>Je hebt de factuur reeds voldaan</i>
+	{% elseif order.payment.status == 'in_store' %}
+		<i>Je hebt aangegeven deze bestelling in de winkel te willen betalen.</i>
+	{% else %}
+		<i>Deze factuur is nog niet betaald, je kunt de factuur betalen in je accountoverzicht.</i>
+	{% endif %}
+</div>

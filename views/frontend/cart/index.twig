@@ -1,0 +1,135 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Uw winkelwagen
+{% endblock %}
+
+{% block body %}
+	{% if currentUser.currentOrder.items|length > 0 %}
+		<div class="row">
+	    	<div class="col-md-12">
+	    		<h3>Uw winkelwagen</h3>
+	    		<br>
+	    		<form method="POST" action="/order/remove">
+	    			<input type="hidden" name="order" value="{{ currentUser.currentOrder.id }}">
+		    		<table class="table table-striped table-bordered">
+		    			<tr>
+							<th><b>Product nr.</b></th>
+							<th><b>Product</b></th>
+							<th><b>Aantal</b></th>
+							<th><b>Prijs per stuk</b></th>
+							<th><b>Waarvan BTW</b></th>
+							<th><b>Subtotaal</b></th>
+							<th><b>Wijzig</b></th>
+							<th><b>Verwijder</b></th>
+						</tr>
+						{% for item in currentUser.currentOrder.items %}
+							<tr>
+								<td>{{ item.id }}</td>
+								<td>{% if item.stillExists %}<a target="_blank" href="/products/{{item.item_id}}">{{ item.name|title }}</a>{% else %}{{item.name|title}}{% endif %}{% if item.remarks %}<br>Operking: {{ item.remarks }}{% endif %}</td>
+								<td>{{ item.amount }}x</td>
+								<td>{% if item.isSale %}<strike>&euro;  {{item.price|money}}</strike> &euro;  {{ item.sale_price|money }}{% else %}&euro; {{ item.price|money }}{% endif %}</td>
+								<td>6% à &euro; {{ item.effectiveVat|money }}</td>
+								<td>&euro; {{ item.effectiveTotalPrice|money }}</td>
+								<td><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#product-{{ item.id }}">Wijzig</button></td>
+								<td><button type="submit" name="item" value="{{ item.id }}" class="btn btn-sm btn-danger">Verwijder</button></td>
+							</tr>
+						{% endfor %}
+						<tr><td></td><td></td><td></td><td></td><td><b>Subtotaal: </b></td><td>&euro; {{ currentUser.currentOrder.effectiveSubtotalPrice|money }}</td><td></td><td></td></tr>
+						<tr><td></td><td></td><td></td><td></td><td><b>BTW: </b></td><td>&euro; {{currentUser.currentOrder.effectiveTotalVat|money}}</td><td></td><td></td></tr>
+						<tr><td></td><td></td><td></td><td></td><td><b>Totaal: </b></td><td>&euro; {{currentUser.currentOrder.effectiveTotalPrice|money}}</td><td></td><td></td></tr>
+		    		</table>
+		    	</form>
+                <form method="post" action="/order/submit">
+				{% if currentUser.currentOrder.is_event %}
+					<h4>Opties</h4>
+					<div class="form-group">
+						<label>Datum</label>
+						<input name="date" type="date" class="form-control" required />
+					</div>
+					<div class="form-group">
+						<label>Opmerkingen (optioneel)</label>
+						<textarea name="remarks" rows="5" class="form-control" placeholder="Bijv. tijd en locatie"></textarea>
+					</div>
+					<div style="float:right;">
+						<a href="/" class="btn btn-primary">Terug naar het assortiment</a>
+						<button type="submit" class="btn btn-success">Naar besteloverzicht</button>
+					</div>
+				{% else %}
+					{% if currentUser.currentOrder.orderAllowed %}
+						<h4>Pick-up</h4>
+						{% if currentUser.currentOrder.todayAllowed %}
+						<div class="radio">
+							<label>
+								<input type="radio" name="pickup" value="today" checked required> Vandaag (15 min. na bestelling)
+							</label>
+						</div>
+						{% endif %}
+						{% if currentUser.currentOrder.tomorrowAllowed %}
+						<div class="radio">
+							<label>
+								<input type="radio" name="pickup" value="tomorrow" required> Morgen
+							</label>
+						</div>
+						{% endif %}
+						<div style="float:right;">
+							<a href="/" class="btn btn-primary">Terug naar het assortiment</a>
+						    <button type="submit" class="btn btn-success">Verder naar afrekenen</button>
+						</div>
+					{% else %}
+						<p class="text-danger">Wij zijn gesloten. Bestellen is later weer mogelijk.</p>
+                    {% endif %}
+				{% endif %}
+				</form>
+	    	</div>
+	    </div>
+	    {% for product in currentUser.currentOrder.items %}
+	    	<div class="modal fade" id="product-{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="product-{{ product.id }}-label">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="product-{{ product.id }}-label">{{ product.name }}</h4>
+                        </div>
+                        <form method="POST" action="/order/add">
+                            <input type="hidden" name="product" value="{{ product.item_id }}" />
+                            <div class="modal-body">
+                                {% if currentUser.currentOrder.hasProduct(product.id) %}
+                                    <div class="form-group">
+                                        <label for="amount">Hoeveelheid</label>
+                                        <input name="amount" type="number" min="1" class="form-control" value="{{ currentUser.currentOrder.product(product.id).amount }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="remarks">Opmerkingen</label>
+                                        <textarea name="remarks" rows="4" class="form-control" placeholder="Bijv. lactose intolerant">{{ currentUser.currentOrder.product(product.id).remarks }}</textarea>
+                                    </div>
+                                    {% else %}
+                                    <div class="form-group">
+                                        <label for="amount">Hoeveelheid</label>
+                                        <input name="amount" type="number" min="1" class="form-control" value="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="remarks">Opmerkingen</label>
+                                        <textarea name="remarks" rows="4" class="form-control" placeholder="Bijv. lactose intolerant"></textarea>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuleren</button>
+                                <button type="submit" class="btn btn-primary">Bijwerken</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+	    {% endfor %}
+    {% else %}
+    	<div class="row" style="margin-top: 150px;">
+    		<div class="col-md-8 col-md-offset-2">
+    			<h2 style="text-align: center;">U heeft momenteel geen producten in uw winkelwagen</h2>
+    			<br>
+    			<center><a href="/"><button class="btn btn-primary" type="button">Terug naar het assortiment</button></a></center>
+    		</div>
+    	</div>
+    {% endif %}
+{% endblock %}

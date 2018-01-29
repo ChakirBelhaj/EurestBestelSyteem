@@ -1,0 +1,32 @@
+{% extends 'frontend/manage/manage_base.twig' %}
+
+{% block title %}
+	Bewerk categorie
+{% endblock %}
+
+{% block manage_content %}
+	<h3>Bewerk categorie</h3>
+	<form method="post">
+		<div class="form-group">
+		 	<label for="name">Naam</label>
+		    <input type="text" class="form-control" id="name" name="name" placeholder="Categorie naam" value="{{ category.name }}">
+		</div>
+		{% if not category.is_event %}
+		<div class="checkbox">
+	    <label>
+	      <input name="is_sale" type="checkbox" {% if category.is_sale %}checked{% endif %}> Sale categorie
+	    </label>
+		</div>
+	    {% endif %}
+
+	    {% if not category.is_sale %}
+	    <div class="checkbox">
+	    	<label>
+		      <input name="is_event" type="checkbox" {% if category.is_event %}checked{% endif %}> Exclusief evenementen assortiment
+		    </label>
+		 </div>
+	    {% endif %}
+	  	<a href="/manage/categories"><button type="button" class="btn btn-default">Terug</button></a>
+		<button type="submit" name="submit" class="btn btn-primary">Opslaan</button>
+	</form>
+{% endblock %}

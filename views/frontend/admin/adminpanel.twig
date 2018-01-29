@@ -1,0 +1,26 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+<div class="login-form col-md-6 col-md-offset-0">
+    <div class="container">
+
+
+        <h1 class="well">Admin Panel</h1>
+
+        <div class="col-lg-12 well">
+            <div class="row">
+                <a href="/addadmin" class="btn btn-primary">Add admin account</a>
+                <a href="/addemployee" class="btn btn-primary">Add employee account</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script src="/js/password.js"></script>
+{% endblock %}

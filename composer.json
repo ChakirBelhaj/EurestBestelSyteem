@@ -1,0 +1,36 @@
+{
+    "name": "TeamVijf/framework",
+    "description": "A simple application.",
+    "type": "project",
+    "require": {
+        "symfony/dotenv": "^3.3",
+        "symfony/debug": "^3.3",
+        "twig/twig": "^2.0",
+        "sendgrid/sendgrid": "^6.0",
+        "respect/validation": "^1.1",
+        "illuminate/database": "^5.5",
+        "robmorgan/phinx": "^0.9.1",
+        "mollie/mollie-api-php": "^1.9",
+        "symfony/http-kernel": "^3.3",
+        "cakephp/chronos": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/helpers.php"
+        ]
+    },
+    "scripts": {
+        "migrate": "vendor/bin/phinx migrate -e development",
+        "seed": "vendor/bin/phinx seed:run -s RoleSeeder -s UsersSeeder -s CategorySeeder -s ProductSeeder -s OrderSeeder"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rody Molenaar",
+            "email": "rody.molenaar@xtrada.nl"
+        }
+    ]
+}

@@ -1,0 +1,161 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block css %}
+    .header-main {
+        margin-bottom:50px;
+        background:no-repeat center center;
+        background-color:#777;
+        background-image:url('/images/header.jpg');
+        background-attachment:scroll;
+        -webkit-background-size:cover;
+        -moz-background-size:cover;
+        -o-background-size:cover;
+        background-size:cover;
+    }
+    .header-container {
+        padding: 160px 0px;
+    }
+    .header-text {
+        color: #FFFFFF;
+        text-align: center;
+    }
+    .header-title {
+        font-size: 80px;
+    }
+    .header-subheading {
+        font-size: 24px;
+    }
+
+    #main-container {
+        padding-right: 0px;
+        padding-top: 0px;
+    }
+
+    @media screen and (max-width: 991px) {
+        #main-container {
+            padding-right: 0px;
+            padding-top: 0px;
+            padding-left: 0px;
+        }
+    }
+{% endblock %}
+
+{% block outside %}
+
+    <div id="main-container" class="main">
+
+        <div class="breadcrumb hidden-lg hidden-md open-filter">
+            <a onclick="toggle_sidebar()" class="noselect" style="cursor:pointer;width:100%;display:block;">
+                <svg style="width:20px;height:20px" viewBox="0 0 20 20">
+                    <path fill="#000000" d="M7,5H21V7H7V5M7,13V11H21V13H7M4,4.5A1.5,1.5 0 0,1 5.5,6A1.5,1.5 0 0,1 4,7.5A1.5,1.5 0 0,1 2.5,6A1.5,1.5 0 0,1 4,4.5M4,10.5A1.5,1.5 0 0,1 5.5,12A1.5,1.5 0 0,1 4,13.5A1.5,1.5 0 0,1 2.5,12A1.5,1.5 0 0,1 4,10.5M7,19V17H21V19H7M4,16.5A1.5,1.5 0 0,1 5.5,18A1.5,1.5 0 0,1 4,19.5A1.5,1.5 0 0,1 2.5,18A1.5,1.5 0 0,1 4,16.5Z" />
+                </svg>
+            </a>
+        </div>
+        <header class="header-main">
+            <div class="container header-container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-10 mx-auto">
+                        <div class="header-text">
+                            <h1>Eurest</h1>
+                            <span class="subheading">Eten en drinken</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="container-fluid">
+            {% for category in categories %}
+                {% if category.products|length > 0 %}
+                    <div class="row">
+                        <h2 style="margin-left: 15px;">{{ category.name }} {% if category.is_sale %}<span class="label label-sm label-success">Aanbiedingen</span>{% endif %}</h2>
+                        <br>
+                        {% for product in category.products %}
+                            <div class="col-lg-3 col-md-4 mb-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <img class="card-img-top img-responsive" src="/image?w=525&h=350&t=product&id={{ product.id }}">
+                                        <div class="card-body">
+                                            <h4 class="card-title"><a href="/products/{{product.id}}">{{ product.name|title }}</a></h4>
+                                            <h5>&euro; {{ product.price|money }}</h5>
+                                            <p class="card-text">{{ product.description }}</p>
+                                            {% if loggedIn %}
+                                            <a href="/products/{{ product.id }}" class="btn btn-primary btn-sm">Bestellen</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="sidebar-item hidden-lg hidden-md">
+            <div class="form-check">
+                <button type="button" onclick="toggle_sidebar()" class="btn btn-danger btn-block">Sluiten</button>
+            </div>
+        </div>
+        <form method="POST">
+        {% for category in categories %}
+            {% if category.products|length > 0 %}
+            <div class="sidebar-item">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" class="form-check-input" name="categories[]" value="{{ category.id }}" {{ input.checkbox('categories', category.id) }}> &nbsp; {{ category.name }}
+                    </label>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+        <div class="sidebar-item">
+            <div class="form-check">
+                <div class="input-group">
+                    <div class="input-group-addon">&euro;</div>
+                    <input type="number" step="any" class="form-check-input form-control" name="min_price" placeholder="Min. prijs" name="min_price" id="min_price" value="{{ input.old('min_price', '') }}" min="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-item">
+            <div class="form-check">
+                <div class="input-group">
+                    <div class="input-group-addon">&euro;</div>
+                    <input type="number" step="any" class="form-check-input form-control" name="max_price" placeholder="Max. prijs" name="max_price" id="max_price" value="{{ input.old('max_price', '') }}" min="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-item">
+            <div class="form-check">
+                <button type="submit" class="btn btn-primary btn-block">Filter</button>
+            </div>
+        </div>
+        </form>
+            {% if loggedIn and currentUser.role_id == 2 or currentUser.role_id == 3 or currentUser.role_id == 4 %}
+                {% if currentUser.currentOrder.is_event %}
+                <div class="sidebar-item">
+                    <div class="form-check">
+                        <form method="POST" action="/order/change">
+                            <button type="submit" class="btn btn-info btn-sm btn-block">Persoonlijk bestellen</button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="sidebar-item">
+                    <div class="form-check">
+                        <form method="POST" action="/order/change">
+                            <button type="submit" class="btn btn-info btn-sm btn-block">Arangement bestellen</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+    </div>
+
+{% endblock %}

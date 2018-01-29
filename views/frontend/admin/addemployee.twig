@@ -1,0 +1,99 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+<div class="login-form col-md-6 col-md-offset-0">
+    <div class="container">
+
+
+        <h1 class="well">Make employee account</h1>
+
+        <div class="col-lg-12 well">
+            <div class="row">
+                <form method="post">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-5 form-group">
+                                <label>Voornaam</label>
+                                <input required type="text" name="firstname" placeholder="Voornaam" class="form-control">
+                            </div>
+
+                            <div class="col-sm-2 form-group">
+                                <label>Tussenvoegsel(s)</label>
+                                <input type="text" name="middlename" placeholder="Tussenvoegsels" class="form-control">
+                            </div>
+
+                            <div class="col-sm-5 form-group">
+                                <label>Achternaam</label>
+                                <input required type="text" name="lastname" placeholder="Achternaam" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label>Straatnaam</label>
+                                <input required type="text" name="streetname" placeholder="Straatnaam" class="form-control">
+                            </div>
+
+                            <div class="col-sm-6 form-group">
+                                <label>Huisnummer</label>
+                                <input required type="number" name="housenumber" placeholder="Huisnummer" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-4 form-group">
+                                <label>Stad</label>
+                                <input required type="text" name="placeofresidence" placeholder="Plaats" class="form-control">
+                            </div>
+
+                            <div class="col-sm-4 form-group">
+                                <label>Postcode</label>
+                                <input required type="text" name="zipcode" placeholder="Postcode" class="form-control">
+                            </div>
+
+                            <div class="col-sm-4 form-group">
+                                <label>Mobiel</label>
+                                <input required type="number" name="mobile" placeholder="Mobiel" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label>Email Adres</label>
+                                <input required type="email" name="email" placeholder="Email Address" class="form-control">
+                            </div>
+
+                            <input required type="hidden" name="role_idrole" value="1">
+                        </div>
+
+                        <div class="row">
+                            <form>
+                                <div class="col-sm-5 form-group">
+                                    <label for="pass1">Password:</label>
+                                    <input required type="password" name="password" id="password" class="form-control" placeholder="Enter Password Here..">
+                                </div>
+                                <div class="col-sm-5 form-group">
+                                    <label for="pass2">Confirm Password:</label>
+                                    <input required type="password" name="pass2" id="pass2" class="form-control" placeholder="Confirm Password Here.." onkeyup="checkPass(); return false;">
+                                    <span id="confirmMessage" class="confirmMessage"></span>
+                                </div>
+                            </form>
+                        </div>
+
+                        <button type="submit" id="submit" class="btn btn-primary disabled">Submit</button>
+                        <a href="/adminpanel" class="btn btn-primary">Admin Panel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script src="/js/password.js"></script>
+{% endblock %}

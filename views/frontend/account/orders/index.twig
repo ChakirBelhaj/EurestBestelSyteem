@@ -1,0 +1,41 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Mijn bestellingen
+{% endblock %}
+
+{% block body %}
+    <h2>Bestellingen</h2>
+    {% if orders %}
+    	<div class="table-responsive">
+    		<table class="table table-striped table-hover">
+    			<tr><th>Order nummer</th><th>Geplaatst op</th><th>Leverdatum</th><th>Totaalbedrag</th><th>Status</th><th>Actie</th></tr>
+				{% for order in orders %}
+					<tr>
+						<td><a href="/account/orders/{{order.id}}">#{{ order.id }}</a></td>
+						<td>{{ order.created_at|date('d-m-Y H:i') }}</td>
+						<td>{{ order.date_by|date('d-m-Y H:i') }}</td>
+						<td>&euro; {{ order.effectiveTotalPrice|money }}</td>
+                        {% if order.is_event %}
+							<td><label class="label label-default">Opgeslagen</label></td>
+						{% else %}
+							<td>{{ order.statusDetails.statusLabel|raw }}</td>
+						{% endif %}
+						<td>
+							<select onchange="if (this.value != '') { window.location = this.value; }" class="order_select_action">
+								<option value="">Kies een actie</option>
+								<option value="/account/orders/{{order.id}}">Bekijk</option>
+								{% if order.statusDetails.canPay %}
+									<option value="/payment/pay/{{order.id}}">Betaal</option>
+								{% endif %}
+								<option value="/account/orders/{{order.id}}/invoice">Bekijk factuur</option>
+							</select>
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+    	</div>
+    {% else %}
+    	<h4>Je hebt nog geen bestellingen geplaatst.</h4>
+    {% endif %}
+{% endblock %}

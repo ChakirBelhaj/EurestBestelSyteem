@@ -1,0 +1,25 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Wachtwoord reset
+{% endblock %}
+
+{% block body %}
+    <div class="login-form col-md-6 col-md-offset-3">
+    	<h3>Password reset</h3>
+    	{% if errors %}
+    		{% for error in errors %}
+    			{{error}}
+    		{% endfor %}
+    	{% elseif messages %}
+            {% for message in messages %}
+                {{message}}
+            {% endfor %}
+        {% endif %}
+    	<form method="post">
+    		<input type="email" name="email" placeholder="Email">
+	    	<input type="submit" name="submit">
+    	</form>
+        Inloggen? <a href="/login">Login</a>
+    </div>
+{% endblock %}

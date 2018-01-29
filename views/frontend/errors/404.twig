@@ -1,0 +1,24 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block outside %}
+
+	<div class="container">
+		<h1>404</h1>
+		<p>Page not found</p>
+		<p><small>The page you were looking for no longer exists, or went missing somewhere.</small></p>
+		<p><a href="/"><button class="btn btn-sm btn-primary" type="button">Home</button></a> &nbsp; <a onclick="back()"><button class="btn btn-sm btn-primary" type="button">Back to previous page</button></a></p>
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+		function back() {
+		    window.history.back();
+		}
+	</script>
+{% endblock %}

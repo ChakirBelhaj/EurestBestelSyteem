@@ -1,0 +1,216 @@
+{% extends 'frontend/base/default.twig' %}
+
+
+{% block title %}
+	Live orders overview
+{% endblock %}
+
+{% block css %}
+		#orders {
+
+		}
+		#orders .panel-group {
+
+		}
+		#orders .panel {
+			border-radius: 0px;
+		}
+		#orders.loading {
+			background-image: url('/images/loader.gif');
+			background-position: top center;
+			background-size: auto;
+			background-repeat: no-repeat;
+			min-height: 300px;
+		}
+		#live_messages {
+			position: fixed;
+			top: 65px;
+			right: 5px;
+			width: 270px;
+			min-height: 30px;
+			color: #FFFFFF;
+			font-weight: bold;
+		}
+		#live_messages > .message {
+			padding: 10px 20px 10px 16px;
+			border-left: 5px solid black;
+			margin-bottom: 5px;
+		}
+		#live_messages > .message.error {
+			border-color: #b92323;
+			background-color: #d53737;
+		}
+		#live_messages > .message.success {
+			border-color: #468448;
+    		background-color: #4ba04f;
+		}
+		#live_messages > .message.default {
+			border-color: #3c3f44;
+			background-color: #455162;
+		}
+		#update_status {
+			position: fixed;
+			bottom: 0px;
+			right: 0px;
+			background-image: url('/images/loader.gif');
+			background-position: top center;
+			background-size: contain;
+			background-repeat: no-repeat;
+			width: 140px;
+			height: 100px;
+		}
+
+		@media (max-width: 1000px) {
+			#live_messages {
+				display:none;
+			}
+		}
+{% endblock %}
+
+{% block body %}
+	<div id="live_messages">
+		<div id="last_update" class="message default"><span id="update">Loading ...</span></div>
+	</div>
+	<div id="orders" class="loading"></div>
+	<div id="update_status" style="display:none;"></div>
+{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		function init()
+		{
+			// Fetch all open orders
+			var jqxhr = $.post( "/api/orders/fetch", function(data) {
+				console.log('Fetching initial data ...');
+			})
+			.done(function(data) {
+				$.each(data, function(key,value) {
+					show_order(value);
+				});
+
+				if(data.length == 0) {
+					show_message('No items found!', 'default');
+				}
+			})
+			.fail(function() {
+				show_message("Failed to fetch orders","error");
+			});
+
+			$('#orders').removeClass('loading');
+			show_status("Last update: "+ get_timestamp());
+		}
+
+		// Fetch the latest orders
+		function update()
+		{
+			$('#update_status').show('loading');
+
+			// Get new items
+			var jqxhr = $.post( "/api/orders/update", function(data) {
+				console.log('Fetching update data ...');
+			})
+			.done(function(data) {
+				$.each(data, function(key,value) {
+					show_order(value);
+				});
+			})
+			.fail(function() {
+				show_message("Failed to update orders","error");
+			});
+
+			show_status("Last update: "+ get_timestamp());
+			setTimeout(function() {
+				$('#update_status').hide('loading');
+			},1000);
+		}
+
+		// Update an order
+		function update_order(id,status)
+		{
+			// Get new items
+			var jqxhr = $.post( "/api/order/update", {'id': id, 'status': status}, function(data) {
+				console.log('Updating order ...');
+			})
+			.done(function(data) {
+				if(status == 'processing') {
+					$('#order_'+id+' > #collapse_'+id+' > .panel-body > .actions > .button').html('<a class="btn btn-success" onclick="update_order('+id+',\'complete\')">Complete</a>');
+				} else if(status == 'complete' || status == 'cancel') {
+					$('#order_'+id).remove();
+				}
+				show_message("Order has been updated!","success");
+			})
+			.fail(function() {
+				show_message("Failed to update orders","error");
+			});
+		}
+
+		// Create the HTML for an order
+		function show_order(data)
+		{
+			var id = data.id;
+
+			// Add order
+			$('#orders').append(`
+				<!-- ORDER -->
+				<div style="margin-top: 15px;" class="panel panel-default" id="order_${id}">
+					<div class="panel-heading">
+						<a class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse_${id}"><h5>Order #${id}, besteld door: ${data.user_name}</h5></a>
+					</div>
+					<div id="collapse_${id}" class="panel-collapse collapse">
+						<div class="panel-body">
+							<table id="items_${id}" class="table table-responsive table-striped">
+								<tr><th>Item</th><th>Product</th><th>Aantal</th><th>Opmerking(en)</th></tr>
+							</table>
+							<div class="actions">
+								<span class="button"><a class="btn btn-warning" onclick="update_order('${id}','processing')">Wordt bereid</a></span>
+								<span class="pull-right"><a class="btn btn-danger" onclick="update_order('${id}','cancel')">Annuleer order</a></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- END ORDER -->
+			`);
+
+			// Add order items to the order
+			var x = 1;
+			$.each(data.items, function(key,value){
+				$('#items_'+id).append('<tr><td>'+ x +'.</td><td>'+ value.name +'</td><td>'+ value.amount +'x</td><td>'+ (value.remarks != null ? value.remarks : '-') +'</td></tr>');
+				console.log(value);
+				x++;
+			});
+		}
+
+		// Change status message
+		function show_status(text)
+		{
+			$('#update').html(text);
+		}
+
+		// Show popup message
+		function show_message(text,type)
+		{
+			var id = new Date().getTime().toString();
+			$('#live_messages').append('<div id="'+id+'" class="message '+type+'">'+text+'</div>');
+			setTimeout(function() {
+			    $('#'+ id).slideUp('slow');
+			}, 15000);
+		}
+
+		// Get current timestamp in human readable format
+		function get_timestamp()
+		{
+			var m = new Date();
+			return dateString = m.getUTCFullYear() +"-"+ pad((m.getUTCMonth()+1),2) +"-"+ pad(m.getUTCDate(),2)+ " " + pad(m.getUTCHours(),2) + ":" + pad(m.getUTCMinutes(),2) + ":" + pad(m.getUTCSeconds(),2);
+		}
+
+		// Pad item
+		function pad(num, size) {
+		    var s = num+"";
+		    while (s.length < size) s = "0" + s;
+		    return s;
+		}
+
+		setTimeout(init, 1000);
+		setInterval(update, 8500);
+	</script>
+{% endblock %}

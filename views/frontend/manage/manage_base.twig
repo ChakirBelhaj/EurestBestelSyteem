@@ -1,0 +1,18 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block body %}
+<div class="row" style="margin-top: 25px;">
+	<div class="col-md-3">
+		<h3>Catalogus</h3>
+		<div class="list-group">
+		  <a href="/manage/products" class="list-group-item {% if is_current_path('/manage/products') %}active{% endif %}"><span class="badge">{{ number_of_products }}</span>Producten</a>
+		  <a href="/manage/products/new" class="list-group-item {% if is_current_path('/manage/products/new') %}active{% endif %}">Nieuw product</a>
+		  <a href="/manage/categories" class="list-group-item {% if is_current_path('/manage/categories') %}active{% endif %}"><span class="badge">{{ number_of_categories }}</span>Catagorieën</a>
+		  <a href="/manage/categories/new" class="list-group-item {% if is_current_path('/manage/categories/new') %}active{% endif %}">Nieuwe categorie</a>
+		</div>
+	</div>
+	<div class="col-md-9">
+		{% block manage_content %}{% endblock %}
+	</div>
+</div>
+{% endblock %}

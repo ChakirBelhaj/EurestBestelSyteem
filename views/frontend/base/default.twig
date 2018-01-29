@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}{% endblock %} - Eurest Bestelsysteem</title>
+        <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+
+        <link href="/css/bootstrap/bootstrap.min.css" type="text/css" rel="stylesheet">
+        <link href="/css/bootstrap/bootstrap.flatly.min.css" type="text/css" rel="stylesheet">
+        <link href="/css/main.css" type="text/css" rel="stylesheet">
+
+        <style type="text/css">
+            body {
+                margin-top: 60px;
+            }
+            nav#navbar > .container {
+                width: 85%;
+            }
+            li.nav-svg:hover {
+                background-color: #1a242f;
+            }
+            li.nav-svg > a {
+                padding-top: 15.5px;
+                padding-bottom: 15.5px;
+            }
+            li.nav-svg > a > svg > path {
+                fill: #FFFFFF;
+            }
+
+            .btn,
+            .well,
+            .jumbotron,
+            .breadcrumb,
+            .form-control {
+                border-radius: 0px;
+            }
+
+            #messages > .message {
+                color: white;
+                font-weight: bold;
+                border: none;
+                border-radius: 0px;
+            }
+            #messages > .message-error {
+                background-color: #d53737;
+            }
+            #messages > .message-success {
+                background-color: #3ca136;
+            }
+            #messages > .message-default {
+                background-color: #455162;
+            }
+            #messages > .hide {
+                animation: infrontAnimation 1s 2s ease-out;
+            }
+        </style>
+
+        <style type="text/css">
+        {% block css %}{% endblock %}
+        </style>
+
+    </head>
+    <body>
+
+        <nav id="navbar" class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Eurest</a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li {% if is_current_path('/') %}class="active"{% endif %}><a href="/">Assortiment</a></li>
+                        {% if loggedIn and user.role_id == 3 %}
+                        <li {% if is_current_path('/adminpanel')  %}class="active"{% endif %}><a href="/adminpanel">adminpanel</a></li>
+                        {% endif %}
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+
+                        {% if loggedIn %}
+
+                        <li class="nav-svg hidden-xs hidden-sm">
+                            <a href="/cart">
+                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                    <path style="fill:#ffffff;" d="M19.006,2.97c-0.191-0.219-0.466-0.345-0.756-0.345H4.431L4.236,1.461
+                                        C4.156,0.979,3.739,0.625,3.25,0.625H1c-0.553,0-1,0.447-1,1s0.447,1,1,1h1.403l1.86,11.164c0.008,0.045,0.031,0.082,0.045,0.124
+                                        c0.016,0.053,0.029,0.103,0.054,0.151c0.032,0.066,0.075,0.122,0.12,0.179c0.031,0.039,0.059,0.078,0.095,0.112
+                                        c0.058,0.054,0.125,0.092,0.193,0.13c0.038,0.021,0.071,0.049,0.112,0.065c0.116,0.047,0.238,0.075,0.367,0.075
+                                        c0.001,0,11.001,0,11.001,0c0.553,0,1-0.447,1-1s-0.447-1-1-1H6.097l-0.166-1H17.25c0.498,0,0.92-0.366,0.99-0.858l1-7
+                                        C19.281,3.479,19.195,3.188,19.006,2.97z M17.097,4.625l-0.285,2H13.25v-2H17.097z M12.25,4.625v2h-3v-2H12.25z M12.25,7.625v2
+                                        h-3v-2H12.25z M8.25,4.625v2h-3c-0.053,0-0.101,0.015-0.148,0.03l-0.338-2.03H8.25z M5.264,7.625H8.25v2H5.597L5.264,7.625z
+                                         M13.25,9.625v-2h3.418l-0.285,2H13.25z"/>
+                                    <circle style="fill:#ffffff;" cx="6.75" cy="17.125" r="1.5"/>
+                                    <circle style="fill:#ffffff;" cx="15.75" cy="17.125" r="1.5"/>
+                                </svg>
+                                ({{ currentUser.currentOrder.items()|length }})
+                            </a>
+                        </li>
+                        <li class="hidden-md hidden-md hidden-lg"><a href="/cart">Cart</a></li>
+
+                        <li class="nav-svg {% if is_current_path('/account') or is_current_path('/account/orders', true) or is_current_path('/account/preferences') %}active{% endif %}">
+                            <a href="/account" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                    <path fill="#000000" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Welkom, {{currentUser.firstname}}</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li {% if is_current_path('/account') %}class="active"{% endif %}><a href="/account">Mijn account</a></li>
+                                <li {% if is_current_path('/account/orders', true) %}class="active"{% endif %}><a href="/account/orders">Mijn bestelhistorie</a></li>
+                                <li {% if is_current_path('/account/preferences') %}class="active"{% endif %}><a href="/account/preferences">Mijn voorkeuren</a></li>
+
+                                <!-- Eurest employee -->
+                                {% if currentUser.role_id == 3 %}
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="/manage/products">Beheer catalogus</a></li>
+                                    <li><a href="/orders">Live orders overzicht</a></li>
+                                {% elseif currentUser.role_id == 4 %}
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="/manage/products">Beheer catalogus</a></li>
+                                    <li><a href="/adminpanel">Adminpanel</a></li>
+                                {% endif %}
+
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/logout">Log uit</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-svg hidden-xs hidden-sm">
+                            <a href="/logout">
+                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                    <path fill="#000000" d="M14.08,15.59L16.67,13H7V11H16.67L14.08,8.41L15.5,7L20.5,12L15.5,17L14.08,15.59M19,3A2,2 0 0,1 21,5V9.67L19,7.67V5H5V19H19V16.33L21,14.33V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3H19Z" />
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="hidden-md hidden-md hidden-lg"><a href="/logout">Logout</a></li>
+
+                    {% else %}
+
+                        <li class="nav-svg hidden-xs hidden-sm">
+                            <a href="/register">
+                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                    <path fill="#000000" d="M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M6,10V7H4V10H1V12H4V15H6V12H9V10M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12Z" />
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="nav-svg hidden-xs hidden-sm">
+                            <a href="/login">
+                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                    <path fill="#000000" d="M19,3H5C3.89,3 3,3.89 3,5V9H5V5H19V19H5V15H3V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M10.08,15.58L11.5,17L16.5,12L11.5,7L10.08,8.41L12.67,11H3V13H12.67L10.08,15.58Z" />
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="hidden-md hidden-md hidden-lg"><a href="/login">Login</a></li>
+                            <li class="hidden-md hidden-md hidden-lg"><a href="/register">Register</a></li>
+
+                    {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </nav> 
+
+        <div class="container">
+            <div id="messages">
+                {% for error in errors %}
+                    <div class="alert fade in message message-error alert-dismissable">{{ error|e }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>
+                {% endfor %}
+
+                {% for message in messages %}
+                    <div class="alert fade in message message-default alert-dismissable">{{ message|e }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>
+                {% endfor %}
+
+                {% for message in success %}
+                    <div class="alert fade in message message-success alert-dismissable">{{ message }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>
+                {% endfor %}
+            </div>
+        </div>
+        {% block outside %}
+
+        {% endblock %}
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
+
+        <script src="/js/jquery/1.12.4/jquery.min.js"></script>
+
+        <script src="/js/bootstrap/bootstrap.min.js"></script>
+
+        <script src="/js/main.js"></script>
+
+        <script src="/js/jquery.easyPaginate.js"></script>
+        <script src="/js/pagination.js"></script>
+                
+        {# after 4 seconds dismissses the message #}
+        <script>
+            
+        </script>
+
+        {% block javascript %}{% endblock %}
+    </body>
+</html>

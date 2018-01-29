@@ -1,0 +1,29 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Bedankt voor uw bestelling
+{% endblock %}
+
+{% block body %}
+	{% if payment_method == 'online' and payment %}
+		{% if payment.status == 'paid' %}
+			<h1>Bedankt voor je bestelling!</h1>
+			<p>Je {{payment.method}} betaling is succesvol verwerkt.</p>
+			<a href="/account/orders">Ga naar mijn bestellingen</a>
+		{% elseif payment.status == 'open' or payment.status == 'pending' %}
+			<h1>Bedankt voor je bestelling!</h1>
+			<p>Je {{payment.method}} betaling wordt momenteel geverifieerd.</p>
+			<a href="/account/orders">Ga naar mijn bestellingen</a>
+		{% elseif payment.status == 'failed' or payment.status == 'cancelled' %}
+			<h1>Fout</h1>
+			<p>De betaling is mislukt.</p>
+			<a href="/payment/pay/{{order_id}}">Probeer opnieuw</a>
+		{% endif %}
+	{% elseif payment_method == 'in_store' %}
+		<h1>Bedankt voor je bestelling!</h1>
+		<p>Je bestelling wordt zo snel mogelijk verwerkt.</p>
+		<a href="/account/orders">Ga naar mijn bestellingen</a>
+	{% else %}
+		<h1>Er is iets misgegaan</h1>
+	{% endif %}
+{% endblock %}

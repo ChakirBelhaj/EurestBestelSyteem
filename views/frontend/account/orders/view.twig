@@ -1,0 +1,92 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    Bestelling #{{order.id}}
+{% endblock %}
+
+{% block body %}
+	<h2>Bestelling #{{order.id}}</h2>
+    <br>
+    <div class="row">
+    	<div class="col-md-4">
+    		<h3>Overzicht</h3>
+    		<table class="table table-striped">
+		    	<tr>
+		    		<td>Geplaatst op</td><td>{{ order.created_at|date('d-m-Y H:i') }}</td>
+		    	</tr>
+				<tr>
+					<td>Leverdatum</td><td>{{ order.date_by|date('d-m-Y H:i') }}</td>
+				</tr>
+		    	<tr>
+		    		<td>Totaalbedrag</td><td>&euro; {{ order.effectiveTotalPrice|money }}</td>
+		    	</tr>
+                {% if not order.is_event %}
+		    	<tr>
+		    		<td>Status</td><td>{{order.statusDetails.statusLabel|raw}}</td>
+		    	</tr>
+				{% endif %}
+		    </table>
+    	</div>
+    	<div class="col-md-8" style="text-align: right;">
+    		<h3>Acties</h3>
+    		<form method="post" action="/account/orders/{{ order.id }}/action">
+    			<a href="/account/orders">
+    				<button type="button" class="btn btn-primary">Terug</button>
+    			</a>
+                {% if not order.is_event %}
+	    		{% if order.statusDetails.canPay %}
+			  		<a href="/payment/pay/{{order.id}}">
+			  			<button type="button" class="btn btn-success">Betaal</button>
+			  		</a>
+			  	{% endif %}
+			  	{% if order.statusDetails.canCancel %}
+			  		<button type="submit" name="cancel" value="cancel" class="btn btn-danger">Annuleer</button>
+			  	{% endif %}
+			  	<button type="submit" name="reorder" value="reorder" class="btn btn-info">Bestel opnieuw</button>
+				{% endif %}
+			  	<a target="_blank" href="/account/orders/{{order.id}}/invoice">
+			  		<button type="button" class="btn btn-info">Print factuur</button>
+			  	</a>
+    		</form>
+    	</div>
+    </div>
+    <div class="row">
+    	<div class="col-md-12">
+    		<h3>Producten in bestelling</h3>
+    		<br>
+    		<table class="table">
+    			<tr>
+					<th><b>Product nr.</b></th>
+					<th><b>Product</b></th>
+					<th><b>Aantal</b></th>
+					<th><b>Prijs per stuk</b></th>
+					<th><b>Waarvan BTW</b></th>
+					<th><b>Subtotaal</b></th>
+				</tr>
+				<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+				{% for item in order.items %}
+					<tr>
+						<td>{{ item.id }}</td>
+						<td>{% if item.stillExists %}<a target="_blank" href="/products/{{item.item_id}}">{{ item.name }}</a>{% else %}{{item.name}}{% endif %}{% if item.remarks %}<br>Operking: {{ item.remarks }}{% endif %}</td>
+						<td>{{ item.amount }}x</td>
+						<td>{% if item.isSale %}<strike>&euro;  {{item.price|money}}</strike> &euro;  {{ item.sale_price|money }}{% else %}&euro; {{ item.price|money }}{% endif %}</td>
+						<td>6% à &euro; {{ item.effectiveVat|money }}</td>
+						<td>&euro; {{ item.effectiveTotalPrice|money }}</td>
+					</tr>
+				{% endfor %}
+				<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+				<tr><td></td><td></td><td></td><td></td><td><b>Subtotaal: </b></td><td>&euro; {{ order.effectiveSubtotalPrice|money }}</td></tr>
+				<tr><td></td><td></td><td></td><td></td><td><b>BTW: </b></td><td>&euro; {{order.effectiveTotalVat|money}}</td></tr>
+				<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+				<tr><td></td><td></td><td></td><td></td><td><b>Totaal: </b></td><td>&euro; {{order.effectiveTotalPrice|money}}</td></tr>
+    		</table>
+    	</div>
+
+		{% if order.remarks %}
+			<strong>Opmerkingen:</strong>
+		<p>
+			{{ order.remarks }}
+		</p>
+		{% endif %}
+    </div>
+{% endblock %}

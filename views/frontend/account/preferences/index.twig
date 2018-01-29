@@ -1,0 +1,31 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+	Voorkeuren
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<h2>Mijn voorkeuren</h2>
+			<br>
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			  	Email voorkeuren
+			  </div>
+			  <div class="panel-body">
+			  	<form method="post">
+			  		<div class="checkbox">
+	    				<label><input name="preference_invoice_emails" type="checkbox" {% if currentUser.preference_invoice_emails %}checked{% endif %}> <b>Ontvang een email met de factuur na elke bestelling.</b></label>
+	  				</div>
+	  				<div class="checkbox">
+	  					<label><input name="preference_order_ready_emails" type="checkbox" {% if currentUser.preference_order_ready_emails %}checked{% endif %}> <b>Ontvang een email wanneer je bestelling klaar is om opgehaald te worden.</b></label>
+	  				</div>
+	  				<br>
+	  				<input type="submit" class="btn btn-primary" value="Opslaan">
+			  	</form>
+			  </div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'frontend/base/default.twig' %}
+
+{% block title %}
+    {{ product.name|title }}
+{% endblock %}
+
+{% block css %}
+    body {
+        padding-top: 61px;
+    }
+{% endblock %}
+
+{% block body %}
+    <h1>{{ product.name|title }}</h1>
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Product info</h3>
+                    <img class="card-img-top img-responsive" src="/image?w=525&h=350&t=product&id={{ product.id }}">
+                    <h4 class="card-title">{{ product.name|title }}</h4>
+                    <h5>&euro; {{ product.price|money }}</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h3>Bestel dit product</h3>
+                    <form method="POST" action="/order/add">
+                        <input type="hidden" name="product" value="{{ product.id }}" />
+                        {% if currentUser.currentOrder.hasProduct(product.id) %}
+                            <div class="form-group">
+                                <label for="amount">Hoeveelheid</label>
+                                <input name="amount" type="number" min="1" class="form-control" value="{{ currentUser.currentOrder.product(product.id).amount }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="remarks">Opmerkingen</label>
+                                <textarea name="remarks" rows="4" class="form-control" placeholder="Bijv. lactose intolerant">{{ currentUser.currentOrder.product(product.id).remarks }}</textarea>
+                            </div>
+                            {% else %}
+                            <div class="form-group">
+                                <label for="amount">Hoeveelheid</label>
+                                <input name="amount" type="number" min="1" class="form-control" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="remarks">Opmerkingen</label>
+                                <textarea name="remarks" rows="4" class="form-control" placeholder="Bijv. lactose intolerant"></textarea>
+                            </div>
+                        {% endif %}
+                        <a href="/"><button type="button" class="btn btn-default">Terug</button></a>
+                        <button type="submit" class="btn btn-primary">Toevoegen aan bestelling</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
